@@ -42,17 +42,23 @@ def encriptar(mensaje, llave):
     return texto_encriptado
 
 
-def decrypt(ciphertext, key):
-    if ciphertext == '' or key == '':
+def desencriptar(mensaje, llave):
+    # Revisa que los parametros sean strings validos para no computar un string vacio
+    if mensaje == '' or llave == '':
         return ''
 
-    charIdx = abecedario.index(ciphertext[0])
-    keyIdx = one_time_pad.index(key[0])
+    # Tomamos el indice del primer caracter del mensaje en el abecedario
+    char_index = abecedario.index(mensaje[0])
+    # Tomamos el indice del primer caracter de la llave en el abecedario
+    llave_index = one_time_pad.index(llave[0])
 
-    cipher = (charIdx - keyIdx) % len(one_time_pad)
-    char = abecedario[cipher]
+    # Realizamos el Desencriptado
+    desencriptado = (char_index - llave_index) % len(one_time_pad)
+    # Buscamos un solo caracter desencriptado en el abecedario
+    character = abecedario[desencriptado]
 
-    return char + decrypt(ciphertext[1:], key[1:])
+    # Recursivamente, buscamos los demas caracteres en el abecedario
+    return character + desencriptar(mensaje[1:], llave[1:])
 
 
 if __name__ == '__main__':
@@ -73,4 +79,6 @@ if __name__ == '__main__':
         text_file.close()
         print(encriptar(mensaje, llave))
     elif sys.argv[1] == availableOpt[0]:
-        print(decrypt(mensaje, llave))
+        text_file = open("llave.txt", "r")
+        llave = text_file.read()
+        print(desencriptar(mensaje, llave))
